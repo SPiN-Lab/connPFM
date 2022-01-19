@@ -115,12 +115,16 @@ def event_detection(
         LGR.info("Selecting points with edge time-series matrix...")
         if peak_detection == "ets":
             LGR.info("Reading AUC of surrogates to perform the thresholding step...")
+            all_hist = True
+            if n > 100000:
+                all_hist = False
             thr = connectivity_utils.surrogates_histogram(
                 surrprefix,
                 sursufix,
                 masker,
                 hist_range=(hist_min, hist_max),
                 numrand=nsur,
+                all_hist=all_hist
             )
         elif peak_detection == "ets_time":
             # Initialize array for threshold

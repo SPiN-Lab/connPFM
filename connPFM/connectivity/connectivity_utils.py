@@ -145,25 +145,58 @@ def surrogates_histogram(
     numrand=100,
     nbins=500,
     percentile=95,
+    all_hist=True,
 ):
     """
     Read AUCs of surrogates, calculate histogram and sum of all histograms to
     obtain a single histogram that summarizes the data.
     """
-    ets_hist = np.zeros((numrand, nbins))
 
-    # calculate histogram for each surrogate
-    hist = Parallel(n_jobs=-1, backend="multiprocessing")(
-        delayed(calculate_hist)(surrprefix, sursufix, irand, masker, hist_range, nbins)
-        for irand in range(numrand)
-    )
+    if all_hist:
+        ets_hist = np.zeros((numrand, nbins))
 
-    for irand in range(numrand):
-        ets_hist[irand, :] = hist[irand][0]
+        # calculate histogram for each surrogate
+        hist = Parallel(n_jobs=-1, backend="multiprocessing")(
+            delayed(calculate_hist)(surrprefix, sursufix, irand, masker, hist_range, nbins)
+            for irand in range(numrand)
+        )
 
-    bin_edges = hist[0][1]
+        for irand in range(numrand):
+            ets_hist[irand, :] = hist[irand][0]
+
+        bin_edges = hist[0][1]
+
+        # calculate histogram threshold
+        thr = calculate_hist_threshold(ets_hist, bin_edges, percentile)
+    else:
+        all_thr = Parallel(n_jobs=-1, backend="multiprocessing")(
+            delayed(surrogate_threshold)(
+                surrprefix, sursufix, masker, hist_range, irand, nbins, percentile
+            )
+            for irand in range(numrand)
+        )
+
+        thr = np.mean(all_thr)
+
+    return thr
+
+
+def surrogate_threshold(
+    surrprefix,
+    sursufix,
+    masker,
+    hist_range,
+    irand,
+    nbins=500,
+    percentile=95,
+):
+    """
+    Read AUCs of surrogates, calculate histogram and sum of all histograms to
+    obtain a single histogram that summarizes the data.
+    """
+    hist, bin_edges = calculate_hist(surrprefix, sursufix, irand, masker, hist_range, nbins)
 
     # calculate histogram threshold
-    thr = calculate_hist_threshold(ets_hist, bin_edges, percentile)
+    thr = calculate_hist_threshold(hist, bin_edges, percentile)
 
     return thr
