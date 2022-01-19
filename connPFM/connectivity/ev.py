@@ -124,7 +124,7 @@ def event_detection(
                 masker,
                 hist_range=(hist_min, hist_max),
                 numrand=nsur,
-                all_hist=all_hist
+                all_hist=all_hist,
             )
         elif peak_detection == "ets_time":
             # Initialize array for threshold
