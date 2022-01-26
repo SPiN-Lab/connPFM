@@ -118,7 +118,7 @@ def event_detection(
             all_hist = True
             if n > 100000:
                 all_hist = False
-            thr = connectivity_utils.surrogates_histogram(
+            thr, thr_all = connectivity_utils.surrogates_histogram(
                 surrprefix,
                 sursufix,
                 masker,

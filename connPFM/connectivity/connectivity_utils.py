@@ -151,6 +151,7 @@ def surrogates_histogram(
     Read AUCs of surrogates, calculate histogram and sum of all histograms to
     obtain a single histogram that summarizes the data.
     """
+    thr_all = None
 
     if all_hist:
         ets_hist = np.zeros((numrand, nbins))
@@ -169,16 +170,18 @@ def surrogates_histogram(
         # calculate histogram threshold
         thr = calculate_hist_threshold(ets_hist, bin_edges, percentile)
     else:
-        all_thr = Parallel(n_jobs=-1, backend="multiprocessing")(
-            delayed(surrogate_threshold)(
-                surrprefix, sursufix, masker, hist_range, irand, nbins, percentile
+        thr_all = np.asarray(
+            Parallel(n_jobs=-1, backend="multiprocessing")(
+                delayed(surrogate_threshold)(
+                    surrprefix, sursufix, masker, hist_range, irand, nbins, percentile
+                )
+                for irand in range(numrand)
             )
-            for irand in range(numrand)
         )
 
-        thr = np.mean(all_thr)
+        thr = np.mean(thr_all)
 
-    return thr
+    return thr, thr_all
 
 
 def surrogate_threshold(
