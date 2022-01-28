@@ -116,7 +116,7 @@ def event_detection(
         if peak_detection == "ets":
             LGR.info("Reading AUC of surrogates to perform the thresholding step...")
             all_hist = True
-            if n > 100000:
+            if ets.shape[1] > 50000:
                 all_hist = False
             thr, thr_all = connectivity_utils.surrogates_histogram(
                 surrprefix,
@@ -126,6 +126,7 @@ def event_detection(
                 numrand=nsur,
                 all_hist=all_hist,
             )
+            breakpoint()
         elif peak_detection == "ets_time":
             # Initialize array for threshold
             thr = np.zeros(t)

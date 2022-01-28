@@ -170,14 +170,14 @@ def surrogates_histogram(
         # calculate histogram threshold
         thr = calculate_hist_threshold(ets_hist, bin_edges, percentile)
     else:
-        thr_all = np.asarray(
-            Parallel(n_jobs=-1, backend="multiprocessing")(
-                delayed(surrogate_threshold)(
-                    surrprefix, sursufix, masker, hist_range, irand, nbins, percentile
-                )
-                for irand in range(numrand)
+        thr_all = Parallel(n_jobs=-1, backend="multiprocessing")(
+            delayed(surrogate_threshold)(
+                surrprefix, sursufix, masker, hist_range, irand, nbins, percentile
             )
+            for irand in range(numrand)
         )
+
+        # breakpoint()
 
         thr = np.mean(thr_all)
 
