@@ -11,7 +11,31 @@ LGR = logging.getLogger(__name__)
 
 
 def debiasing(data_file, mask, te, mtx, tr, prefix, groups, groups_dist, history_str):
-    """Perform debiasing based on denoised edge-time matrix."""
+    """
+    Perform debiasing based on denoised edge-time matrix.
+
+    Parameters
+    ----------
+    data_file : str or list of str
+        Path to data files
+    mask : str
+        Path to mask file
+    te : int
+        list of TEs to perform the debiasing
+    mtx : ndarray
+        matrix to do the debiasing
+    tr : float
+        repetition time
+    prefix : str
+        prefix for output files
+    groups : bool
+        If True, perform debiasing with groups hrf
+    groups_dist : int
+        Distance between groups
+    history_str : str
+        History string
+    """
+
     if te is None and len(data_file) == 1:
         te = [0]
     elif len(te) > 1:

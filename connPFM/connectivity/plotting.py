@@ -43,6 +43,27 @@ def plot_ets_matrix(
 ):
     """
     Plots edge-time matrix
+
+    Parameters
+    ----------
+    ets : ndarray
+        edge time series matrix
+    outdir : str
+        output directory
+    rss : ndarray
+        root-sum-square timeseries
+    sufix : str
+        sufix to be added to the output file
+    dvars_file : str
+        path to the dvars file
+    enorm_file : str
+        path to the enorm file
+    peaks : list
+        list of peaks
+    vmin : float
+        minimum value for the colorbar
+    vmax : float
+        maximum value for the colorbar
     """
     if vmin is None:
         vmin = np.min(ets)

@@ -12,6 +12,23 @@ LGR = logging.getLogger(__name__)
 def load_data(data, atlas, n_echos=1):
     """
     Load and mask data with atlas using NiftiLabelsMasker.
+
+    Parameters
+    ----------
+    data : list of str
+        list of datasets containing the different echos
+    atlas : str
+        dataset with the different ROIs to extract the timeseries
+    n_echos : integer
+        Number of echos
+
+    Returns
+    -------
+    data_masked : Numpy matrix
+        nROI x nscans Timeseries of the selected ROIs extracted from the dataset,
+        in case of multiecho echoes are concatenated as nROI x (nscans x echos)
+    masker : instance of NiftiMasker
+        masker object to load the data
     """
     # Initialize masker object
     masker = NiftiLabelsMasker(labels_img=atlas, standardize=False, strategy="mean")
@@ -42,6 +59,23 @@ def load_data(data, atlas, n_echos=1):
 def save_img(data, output, masker, history_str=None):
     """
     Save data as Nifti image, and update header history.
+
+    Parameters
+    ----------
+    data : list of str
+        nROI x nscans Timeseries of the selected ROIs extracted from the dataset
+    output: str
+        path for putput file
+    masker : instance of NiftiMasker
+        masker object to tramfrom the data to a 3dmatrix
+
+    Returns
+    -------
+    data_masked : Numpy matrix
+        nROI x nscans Timeseries of the selected ROIs extracted fromt the dataset,
+        in case of multiecho echoes are concatenated as nROI x (nscans x echos)
+    masker : instance of NiftiMasker
+        masker object to load the data
     """
     # Transform data back to Nifti image
     data_img = masker.inverse_transform(data)

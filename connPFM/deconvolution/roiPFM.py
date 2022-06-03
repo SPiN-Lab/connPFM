@@ -28,7 +28,45 @@ def roiPFM(
     hrf_path=None,
     history_str="",
 ):
+    """
+    Compute PFM for the timeseries of the dataset ROIs
 
+    Parameters
+    ----------
+    data : list of str
+        list of datasets containing the different echos
+    atlas : str
+        dataset with the different ROIs to extract the timeseries
+    output: str
+        path for putput file
+    tr: integer
+        repetition time of the dataset
+    username: str
+        name of the user in case of launching jobs in a cluster
+    te: list of integer
+        echo times for the different echoes if data is multiecho
+    dir: str
+        temporal directory name
+    block: boolean
+        if True, use the block design for the hrf
+    jobs: integer
+        number of jobs to launch in a cluster,
+        if 0 then use serial execution (recomended only for testing)
+    nsurrogates: integer
+        number of surrogate datasets to generate
+    nstability: integer
+        number of stability iterations
+    percentile: float
+        percentile to use for the stability threshold
+    maxiterfactor: float
+        factor to use for the maximum number of iterations
+    hrf_shape: str
+        shape of the HRF to use
+    hrf_path: str
+        path to the user hrf file to use
+    history_str: str
+        history string to add to the output file
+    """
     if te is None and len(data) == 1:
         te = [0]
     elif len(te) > 1:

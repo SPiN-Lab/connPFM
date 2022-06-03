@@ -25,7 +25,47 @@ def event_detection(
     te=[0],
     jobs=1,
 ):
-    """Perform event detection on given data."""
+    """
+    Perform event detection on given data.
+
+    Parameters
+    ----------
+    data_file : str or list of str
+        Path to data file.
+    atlas : str
+        Path to atlas file.
+    surrprefix : str
+        Prefix for surrogate data files.
+    sursufix : str
+        Suffix for surrogate data files.
+    nsur : int
+        Number of surrogates.
+    segments : bool
+        If True, perform event detection on each segment separately.
+    peak_detection : str
+        Method to use for peak detection.
+    nbins : int
+        Number of bins to use for histogram.
+    te : list of int
+        List of TEs to perform event detection on.
+    Returns
+    -------
+    ets : ndarray
+        Edge-time-series matrix.
+    rss : ndarray
+        Root-sum-square time-series.
+    rssr: ndarray
+        Root-sum-square time-series for surrogates
+    idxpeak : ndarray
+        Indices of peaks in RSS.
+    ets_denoised : ndarray
+        Denoised edge-time-series matrix.
+    mu : arrray
+    mean co-fluctuation (edge time series) across all peaks
+    u : ndarray
+        vector of indices for the upper triangle of the matrix y axis
+    v : ndarray
+        vector of indices for the upper triangle of the matrix x axis"""
     data, masker = load_data(data_file, atlas, n_echos=len(te))
     # load and zscore time series
     # AUC does not get z-scored
@@ -165,6 +205,40 @@ def ev_workflow(
 ):
     """
     Main function to perform event detection and plot results.
+
+    Parameters
+    ----------
+    data_file : str
+        path to the data file
+    auc_file : str
+        path to the auc file
+    atlas : str
+        path to the atlas file
+    surr_dir : str
+        path to the directory containing the surrogate data
+    out_dir : str
+        path to the output directory
+    matrix : str
+        path to the output for the event dection matrix
+    te : list
+        list of TEs
+    nsurrogates : int
+        number of surrogates
+    dvars : str
+        path to the dvars file
+    enorm : str
+        path to the enorm file
+    afni_text : str
+        path to the afni text file
+    history_str : str
+        string to be added to the history of the output files
+    peak_detection : str
+        method to use for peak detection
+
+    Returns
+    -------
+    ets_auc_denoised : ndarray
+        edge time series matrix denoised
     """
     #  If te is None, make it a list with 0
     if te is None and len(data_file) == 1:
