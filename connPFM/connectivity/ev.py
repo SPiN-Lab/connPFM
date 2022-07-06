@@ -3,12 +3,13 @@ import logging
 from os.path import join
 
 import numpy as np
-from joblib import Parallel, delayed
+from dask import compute
+from dask import delayed as delayed_dask
 from scipy.sparse import save_npz
 
 from connPFM.connectivity import connectivity_utils
 from connPFM.connectivity.plotting import plot_ets_matrix
-from connPFM.utils.io import load_data
+from connPFM.utils.io import dask_scheduler, load_data
 
 LGR = logging.getLogger(__name__)
 
@@ -47,13 +48,14 @@ def event_detection(
 
     # calculate ets and rss of surrogate data
     LGR.info("Calculating edge-time matrix, RSS and histograms for surrogates...")
-    surrogate_events = Parallel(n_jobs=jobs, backend="multiprocessing")(
-        delayed(connectivity_utils.rss_surr)(
+    _, cluster = dask_scheduler(jobs)
+    futures = []
+    for irand in range(nsur):
+        fut = delayed_dask(connectivity_utils.rss_surr, pure=False)(
             auc_ts, u, v, surrprefix, sursufix, masker, irand, nbins
         )
-        for irand in range(nsur)
-    )
-
+        futures.append(fut)
+    surrogate_events = compute(futures)[0]
     # Make selection of points with RSS
     if "rss" in peak_detection:
         LGR.info("Selecting points with RSS...")

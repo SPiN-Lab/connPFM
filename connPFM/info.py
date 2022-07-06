@@ -58,6 +58,9 @@ REQUIRES = [
     "scipy>=1.3.3",
     "sklearn",
     "PyWavelets",
+    "dask",
+    "distributed",
+    "dask_jobqueue",
 ]
 
 TESTS_REQUIRES = [
